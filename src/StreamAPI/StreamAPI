@@ -1,0 +1,146 @@
+ //первый вариант создание стрима из коллекции
+        Collection<String> collection = Arrays.asList("a", "b", "c", "d", "d", "d");
+        Stream<String> stringStream = collection.stream();
+
+        //второй вариант
+        Stream<String> stringStream1 = Stream.of("a", "b", "c", "d");
+
+        //
+        String[] strArr = {"a", "b", "c", "d"};
+        Stream<String> stringStream2 = Arrays.stream(strArr);
+
+        //
+        //Stream<String> stringStream3 = Files.lines(Paths.get("filename.txt"));
+
+        //
+        String str = "abcd";
+        IntStream chars = str.chars();
+        chars.forEach(System.out::println); //номера символов
+
+        //
+        Stream<Object> build = Stream
+                .builder()
+                .add("a")
+                .add("b")
+                .add("c")
+                .add("d")
+                .build();
+
+        //
+        Stream<String> parallelStream = collection.parallelStream(); //параллельный стрим
+
+        //
+        Stream<Integer> integerStream = Stream.iterate(1, i -> i + 1); //бесконечное создание
+        integerStream.forEach(System.out::println);
+
+        //
+        Stream<String> stringStream3 = Stream.generate(() -> "a1"); //бесконечное создание .limit(5) генерация первых 5
+        stringStream3.forEach(System.out::println);
+
+
+
+        // filter
+        long count = collection.stream().filter("c"::equals).count();
+        System.out.println(count);
+
+        //skip пропуск элементов
+        Optional<String> first = collection.stream().skip(2).findFirst();
+        first.ifPresent(System.out::println);
+
+        //distinct возвращает стрим без дубликатов
+        List<String> collect = collection.stream().distinct().collect(Collectors.toList());
+        System.out.println(collect.size());
+
+        //peek действие с каждым объектом
+        List<String> stream = collect
+                .stream()
+                .peek(it -> System.out.println("," + it))
+                .collect((Collectors.toList()));
+
+        //map действие с каждым объектом, заменяя каждый объект
+
+        Stream<String> stream1 = collect
+                .stream()
+                .map(it -> it + 1);
+        stream1.forEach(System.out::println);
+
+        //limit ограничитель выборки
+        collection
+                .stream()
+                .limit(2)
+                .forEach(System.out::println); //напечатает первые 2
+
+        //sorted сортировка
+        collection
+                .stream()
+                .sorted()
+                .limit(2)
+                .forEach(System.out::println);
+
+        //mapToInt
+        //mapToDouble
+        //mapToLong
+
+        collection
+                .stream()
+                .mapToInt(it -> {
+                    try {
+                        Integer.parseInt(it);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    return 0;
+                })
+                .forEach(System.out::println);
+
+        //flatMap разбивка
+        Collection<String> collection1 = Arrays.asList("a,b", "b,c", "c,d", "d,e");
+        collection
+                .stream()
+                .flatMap(it -> Arrays.asList(it.split(",")).stream())
+                .forEach(System.out::println);
+
+        //findFirst взять первый элемент или
+        collection
+                .stream()
+                .findFirst()
+                .orElse("not first elem");
+
+        collection
+                .stream()
+                .skip(collection.size() - 1)
+                .findAny().orElse("not found last elem");
+
+        collection.stream()
+                .filter("abs"::equals) // (it -> "abs".equals(it))
+                .findFirst()
+                .orElseThrow(NullPointerException::new);
+
+        //найти 4 элемент
+        collection
+                .stream()
+                .skip(3)
+                .findFirst()
+                .orElse("not found");
+
+        //вывести элементы, в которых содержится что-то
+        Collection<String> collection2 = Arrays.asList("Иван", "Петр", "Денис", "Дима", "Женя", "Вася");
+        collection2
+                .stream()
+                .filter(it -> it.contains("a"))
+                .forEach(System.out::println);
+
+        //
+        Collection<User> users = Arrays.asList(
+                new User("Антон", 32, Gender.MALE),
+                new User("Паша", 18, Gender.MALE),
+                new User("Дима", 21, Gender.MALE),
+                new User("Костя", 30, Gender.MALE),
+                new User("Женя", 29, Gender.MALE)
+        );
+        users
+                .stream()
+                .filter(it -> it.getAge() >= 18 &&
+                        it.getAge() < 27 &&
+                        it.getGender() == Gender.MALE)
+                .forEach(System.out::println);
